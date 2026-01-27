@@ -13,14 +13,6 @@ logger = setup_logging(__name__)
 class WhisperTranscriber:
     """Gerencia transcrição de áudio usando Whisper"""
     def __init__(self, model_name:str, device:str = None, compute_type:str = None):
-        """
-        Inicializa o transcritor
-        
-        Args:
-            model_name: Nome do modelo Whisper
-            device: Device para processamento
-            compute_type: Tipo de computação
-        """
         self.model_name = model_name
         self.device = device or Config.DEVICE
         self.compute_type = compute_type or Config.COMPUTE_TYPE
@@ -50,16 +42,7 @@ class WhisperTranscriber:
             raise
     
     def transcribe(self,audio_path: str,language: str = "pt") -> Tuple[List[TranscriptionSegment], dict]:
-        """
-        Transcreve arquivo de áudio
-        
-        Args:
-            audio_path: Caminho do arquivo
-            language: Código do idioma (None = auto-detect)
-            
-        Returns:
-            Tupla (lista de segmentos, info do áudio)
-        """
+        """Transcreve arquivo de áudio"""
         if not Path(audio_path).exists():
             raise FileNotFoundError(f"Arquivo não encontrado: {audio_path}")
         

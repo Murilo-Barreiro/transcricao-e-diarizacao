@@ -7,14 +7,7 @@ from src.utils.logging_config import setup_logging
 logger = setup_logging(__name__)
 
 def save_transcription(segments: List[TranscriptionSegment],output_path: Path,metadata: dict = None) -> None:
-    """
-    Salva transcrição em arquivo de texto
-    
-    Args:
-        segments: Lista de segmentos transcritos
-        output_path: Caminho de saída
-        metadata: Metadados adicionais
-    """
+    """Salva transcrição em arquivo de texto"""
     with open(output_path, "w", encoding="utf-8") as f:
         for segment in segments:
             f.write(
@@ -31,14 +24,7 @@ def save_transcription(segments: List[TranscriptionSegment],output_path: Path,me
 
 
 def save_diarized_transcription(segments: List[TranscriptionSegment], output_path: Path, metadata: dict = None) -> None:
-    """
-    Salva transcrição com diarização formatada por speaker
-    
-    Args:
-        segments: Lista de segmentos com speakers
-        output_path: Caminho de saída
-        metadata: Metadados adicionais
-    """
+    """Salva transcrição com diarização formatada por speaker"""
     with open(output_path, "w", encoding="utf-8") as f:
         current_speaker = None
         
@@ -60,13 +46,7 @@ def save_diarized_transcription(segments: List[TranscriptionSegment], output_pat
 
 
 def save_json_result(result: ProcessingResult, output_path: Path) -> None:
-    """
-    Salva resultado em JSON
-    
-    Args:
-        result: Resultado do processamento
-        output_path: Caminho de saída
-    """
+    """Salva resultado em JSON"""
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(result.to_dict(), f, indent=2, ensure_ascii=False)
     
@@ -74,13 +54,7 @@ def save_json_result(result: ProcessingResult, output_path: Path) -> None:
 
 
 def append_to_results_log(result: ProcessingResult, log_path: Path) -> None:
-    """
-    Adiciona resultado ao log acumulado
-    
-    Args:
-        result: Resultado do processamento
-        log_path: Caminho do log
-    """
+    """Adiciona resultado ao log acumulado"""
     with open(log_path, "a", encoding="utf-8") as f:
         json.dump(result.to_dict(), f, ensure_ascii=False)
         f.write("\n")

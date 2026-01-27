@@ -19,16 +19,7 @@ logger = setup_logging(__name__)
 
 class AudioProcessor:
     """Orquestra todo o processamento de áudio"""
-    
     def __init__(self, model_name:str = None, use_diarization:bool = True, hf_token:str = None, num_speakers:int | None = None):
-        """
-        Inicializa o processador
-        
-        Args:
-            model_name: Nome do modelo Whisper
-            use_diarization: Se deve fazer diarização
-            hf_token: Token HuggingFace
-        """
         self.model_name = model_name
         self.use_diarization = use_diarization
         self.num_speakers = num_speakers
@@ -49,16 +40,7 @@ class AudioProcessor:
         )
     
     def process(self, audio_path:str, output_name:str = None) -> ProcessingResult:
-        """
-        Processa arquivo de áudio completo
-        
-        Args:
-            audio_path: Caminho do arquivo
-            output_name: Nome base para arquivos de saída
-            
-        Returns:
-            Resultado do processamento
-        """
+        """Processa arquivo de áudio completo"""
         start_time = perf_counter()
         
         # Validações
@@ -94,7 +76,7 @@ class AudioProcessor:
             logger.info("Diarização desabilitada, pulando etapas 2 e 3")
         
         # 3. Salvar resultados
-        self._save_outputs(segments, speaker_segments, output_name, info, perf_counter() - start_time)
+        outout_path = self._save_outputs(segments, speaker_segments, output_name, info, perf_counter() - start_time)
         
         # 4. Criar resultado
         result = ProcessingResult(
@@ -121,9 +103,9 @@ class AudioProcessor:
             f"========== Processamento concluído em {total_time:.2f}s =========="
         )
         
-        return result
+        return result, outout_path
     
-    def _save_outputs(self, segments, speaker_segments, output_name, info, processing_time) -> None:
+    def _save_outputs(self, segments, speaker_segments, output_name, info, processing_time) -> Path:
         """Salva todos os arquivos de saída"""
         metadata = {
             "Modelo": self.model_name,
@@ -147,6 +129,8 @@ class AudioProcessor:
                 Config.OUTPUT_DIR / "diarizations" / f"{output_name}_diarized.txt"
             )
             save_diarized_transcription(segments, diarized_path, metadata)
+
+        return diarized_path
     
     def cleanup(self) -> None:
         """Libera recursos"""

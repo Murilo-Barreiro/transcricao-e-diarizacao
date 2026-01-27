@@ -14,20 +14,10 @@ from src.utils.logging_config import setup_logging
 
 logger = setup_logging(__name__)
 
-
 class AudioDiarizer:
     """Gerencia diarização de áudio usando Pyannote"""
-    
-    def __init__(self,hf_token: str = None,device: str = None, num_speakers: int = None,):
-        """
-        Inicializa o diarizador
-        
-        Args:
-            hf_token: Token do HuggingFace
-            device: Device para processamento
-            min_speakers: Número mínimo de speakers
-            max_speakers: Número máximo de speakers
-        """
+    def __init__(self,hf_token: str = None, device:str = None, num_speakers: int = None,):
+
         self.hf_token = hf_token or Config.HF_TOKEN
         self.device = torch.device(
             device if device else Config.DEVICE
@@ -65,15 +55,7 @@ class AudioDiarizer:
             raise
     
     def process(self, audio_path: str) -> List[SpeakerSegment]:
-        """
-        Processa áudio e identifica speakers
-        
-        Args:
-            audio_path: Caminho do arquivo de áudio
-            
-        Returns:
-            Lista de segmentos de speakers
-        """
+        """Processa áudio e identifica speakers"""
         if not Path(audio_path).exists():
             raise FileNotFoundError(f"Arquivo não encontrado: {audio_path}")
         
