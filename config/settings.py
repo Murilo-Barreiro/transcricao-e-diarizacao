@@ -1,11 +1,17 @@
 import os
 from pathlib import Path
 import torch
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Config:
     """Configurações globais do projeto"""
     # Tokens e API Keys
-    HF_TOKEN = "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"
+    HF_TOKEN = os.getenv("HF_TOKEN", "")
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+    HUBSPOT_TOKEN = os.getenv("HUBSPOT_TOKEN", "")
     
     # Diretórios
     PROJECT_ROOT = Path(__file__).parent.parent

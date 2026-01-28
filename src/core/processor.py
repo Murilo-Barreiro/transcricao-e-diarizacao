@@ -1,6 +1,6 @@
 from pathlib import Path
 from time import perf_counter
-from typing import Optional
+from typing import Optional, Tuple
 
 from config.settings import Config
 
@@ -10,7 +10,7 @@ from src.core.speaker_assignment import assign_speaker_to_segment
 
 from src.models.schemas import ProcessingResult
 
-from src.utils.file_io import save_transcription,save_diarized_transcription,save_json_result,append_to_results_log
+from src.utils.files import save_transcription,save_diarized_transcription,save_json_result,append_to_results_log
 from src.utils.audio import validate_audio_format
 from src.utils.logging_config import setup_logging
 
@@ -39,7 +39,7 @@ class AudioProcessor:
             f"diarization={self.use_diarization}"
         )
     
-    def process(self, audio_path:str, output_name:str = None) -> ProcessingResult:
+    def process(self, audio_path:str, output_name:str = None) -> Tuple[ProcessingResult, Path]:
         """Processa arquivo de áudio completo"""
         start_time = perf_counter()
         
@@ -76,7 +76,7 @@ class AudioProcessor:
             logger.info("Diarização desabilitada, pulando etapas 2 e 3")
         
         # 3. Salvar resultados
-        outout_path = self._save_outputs(segments, speaker_segments, output_name, info, perf_counter() - start_time)
+        output_path = self._save_outputs(segments, speaker_segments, output_name, info, perf_counter() - start_time)
         
         # 4. Criar resultado
         result = ProcessingResult(
@@ -103,7 +103,7 @@ class AudioProcessor:
             f"========== Processamento concluído em {total_time:.2f}s =========="
         )
         
-        return result, outout_path
+        return result, output_path
     
     def _save_outputs(self, segments, speaker_segments, output_name, info, processing_time) -> Path:
         """Salva todos os arquivos de saída"""

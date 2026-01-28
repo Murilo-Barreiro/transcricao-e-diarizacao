@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from typing import List
-from src.models.schemas import TranscriptionSegment, ProcessingResult
+from src.models.schemas import TranscriptionSegment, ProcessingResult, SummarizationResult
 from src.utils.logging_config import setup_logging
 
 logger = setup_logging(__name__)
@@ -45,7 +45,7 @@ def save_diarized_transcription(segments: List[TranscriptionSegment], output_pat
     logger.info(f"Transcrição com diarização salva: {output_path}")
 
 
-def save_json_result(result: ProcessingResult, output_path: Path) -> None:
+def save_json_result(result: ProcessingResult | SummarizationResult, output_path: Path) -> None:
     """Salva resultado em JSON"""
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(result.to_dict(), f, indent=2, ensure_ascii=False)
