@@ -56,23 +56,49 @@ def resample_audio(
     return resampler(waveform.to(device))
 
 
-def validate_audio_format(audio_path: str) -> bool:
+from pathlib import Path
+import subprocess
+
+
+def validate_file(file_path: str) -> str:
+    """Valida o formato do arquivo.
+    Se for áudio, retorna o próprio path.
+    Se for vídeo, extrai o áudio em mp3 e retorna o novo path.
     """
-    Valida se o formato de áudio é suportado
-    
-    Args:
-        audio_path: Caminho do arquivo
-        
-    Returns:
-        True se válido
-    """
-    supported_formats = {'.wav', '.mp3', '.flac', '.ogg', '.m4a'}
-    suffix = Path(audio_path).suffix.lower()
-    
-    if suffix not in supported_formats:
+    audio_formats = {'.wav', '.mp3', '.flac', '.ogg', '.m4a'}
+    video_formats = {'.mp4', '.mkv'}
+
+    file_path = Path(file_path)
+
+    if not file_path.exists():
+        raise FileNotFoundError(f"Arquivo não encontrado: {file_path}")
+
+    suffix = file_path.suffix.lower()
+
+    if suffix in audio_formats:
+        return str(file_path)
+
+    elif suffix in video_formats:
+        output_path = file_path.with_suffix(".mp3")
+
+        command = [
+            "ffmpeg",
+            "-y",
+            "-i", str(file_path),
+            "-vn",
+            "-acodec", "libmp3lame",
+            "-q:a", "2",
+            str(output_path)
+        ]
+
+        subprocess.run(command, check=True)
+
+        return str(output_path)
+
+    else:
+        supported = sorted(audio_formats | video_formats)
         raise ValueError(
             f"Formato não suportado: {suffix}. "
-            f"Formatos suportados: {supported_formats}"
+            f"Formatos suportados: {supported}"
         )
     
-    return True

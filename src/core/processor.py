@@ -1,6 +1,6 @@
 from pathlib import Path
 from time import perf_counter
-from typing import Optional
+from typing import Optional, Tuple
 
 from config.settings import Config
 
@@ -10,8 +10,8 @@ from src.core.speaker_assignment import assign_speaker_to_segment
 
 from src.models.schemas import ProcessingResult
 
-from src.utils.file_io import save_transcription,save_diarized_transcription,save_json_result,append_to_results_log
-from src.utils.audio import validate_audio_format
+from src.utils.files import save_transcription,save_diarized_transcription,save_json_result,append_to_results_log
+from src.utils.audio import validate_file
 from src.utils.logging_config import setup_logging
 
 logger = setup_logging(__name__)
@@ -21,14 +21,7 @@ class AudioProcessor:
     """Orquestra todo o processamento de áudio"""
     
     def __init__(self, model_name:str = None, use_diarization:bool = True, hf_token:str = None, num_speakers:int | None = None):
-        """
-        Inicializa o processador
-        
-        Args:
-            model_name: Nome do modelo Whisper
-            use_diarization: Se deve fazer diarização
-            hf_token: Token HuggingFace
-        """
+        """Inicializa o processador que lida com a trancrição e diarização"""
         self.model_name = model_name
         self.use_diarization = use_diarization
         self.num_speakers = num_speakers
@@ -48,21 +41,11 @@ class AudioProcessor:
             f"diarization={self.use_diarization}"
         )
     
-    def process(self, audio_path:str, output_name:str = None) -> ProcessingResult:
-        """
-        Processa arquivo de áudio completo
-        
-        Args:
-            audio_path: Caminho do arquivo
-            output_name: Nome base para arquivos de saída
-            
-        Returns:
-            Resultado do processamento
-        """
+    def process(self, file_path:str, output_name:str = None) -> Tuple[ProcessingResult, str]:
+        """Processa arquivo de áudio completo"""
         start_time = perf_counter()
         
-        # Validações
-        validate_audio_format(audio_path)
+        audio_path = validate_file(file_path)
         audio_path_obj = Path(audio_path)
         
         if output_name is None:
@@ -94,7 +77,7 @@ class AudioProcessor:
             logger.info("Diarização desabilitada, pulando etapas 2 e 3")
         
         # 3. Salvar resultados
-        self._save_outputs(segments, speaker_segments, output_name, info, perf_counter() - start_time)
+        diarized_path = self._save_outputs(segments, speaker_segments, output_name, info, perf_counter() - start_time)
         
         # 4. Criar resultado
         result = ProcessingResult(
@@ -106,14 +89,15 @@ class AudioProcessor:
             diarization_enabled=self.use_diarization,
             num_speakers=num_speakers,
             device=Config.DEVICE,
-            segments=segments
+            segments=segments,
+            diarized_path=str(diarized_path)
         )
         
         # Salvar resultado em JSON e log
-        json_path = Config.OUTPUT_DIR / f"{output_name}_result.json"
+        json_path = Config.STATS_DIR / f"{output_name}_stats.json"
         save_json_result(result, json_path)
         
-        log_path = Config.OUTPUT_DIR / "processing_log.jsonl"
+        log_path = Config.LOGS_DIR / "processing_log.jsonl"
         append_to_results_log(result, log_path)
         
         total_time = perf_counter() - start_time
@@ -121,9 +105,9 @@ class AudioProcessor:
             f"========== Processamento concluído em {total_time:.2f}s =========="
         )
         
-        return result
+        return result, diarized_path
     
-    def _save_outputs(self, segments, speaker_segments, output_name, info, processing_time) -> None:
+    def _save_outputs(self, segments, speaker_segments, output_name, info, processing_time) -> str:
         """Salva todos os arquivos de saída"""
         metadata = {
             "Modelo": self.model_name,
@@ -147,7 +131,9 @@ class AudioProcessor:
                 Config.OUTPUT_DIR / "diarizations" / f"{output_name}_diarized.txt"
             )
             save_diarized_transcription(segments, diarized_path, metadata)
-    
+
+        return diarized_path
+
     def cleanup(self) -> None:
         """Libera recursos"""
         self.transcriber.unload_model()

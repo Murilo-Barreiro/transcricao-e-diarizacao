@@ -1,37 +1,40 @@
 import os
 from pathlib import Path
 import torch
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Config:
     """Configurações globais do projeto"""
-    # Tokens e API Keys
-    HF_TOKEN = "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"
+    HF_TOKEN = os.getenv("HF_TOKEN")
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    HUBSPOT_TOKEN = os.getenv("HUBSPOT_TOKEN")
     
-    # Diretórios
     PROJECT_ROOT = Path(__file__).parent.parent
     OUTPUT_DIR = PROJECT_ROOT / "outputs"
     DATA_DIR = PROJECT_ROOT / "data"
     LOGS_DIR = OUTPUT_DIR / "logs"
+    STATS_DIR = OUTPUT_DIR / "stats"
+    PROMPTS_DIR = PROJECT_ROOT / "data" / "prompts"
+    INPUT_DIR = PROJECT_ROOT / "data" / "input"
     
-    # Criar diretórios se não existirem
     OUTPUT_DIR.mkdir(exist_ok=True)
     (OUTPUT_DIR / "transcriptions").mkdir(exist_ok=True)
     (OUTPUT_DIR / "diarizations").mkdir(exist_ok=True)
     LOGS_DIR.mkdir(exist_ok=True)
     DATA_DIR.mkdir(exist_ok=True)
     
-    # Configurações de Modelo
+    DEFAULT_TRANSCRIPTION_MODEL = 'turbo'
+    DEFAULT_SUMMARIZATION_MODEL = 'gpt-5-mini'
+
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
     COMPUTE_TYPE = "float16" if torch.cuda.is_available() else "int8"
-    
-    # Configurações de Áudio
     SAMPLE_RATE = 16000
     DEFAULT_LANGUAGE = "pt"
-    
-    # Configurações de Diarização
     DIARIZATION_MODEL = "pyannote/speaker-diarization-3.1"
-    NUM_SPEAKERS = None
-    
-    # Logging
+    NUM_SPEAKERS = 2
+
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
     LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

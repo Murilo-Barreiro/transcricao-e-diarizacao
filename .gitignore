@@ -17,7 +17,7 @@ build/
 
 # Outputs
 outputs/
-data/raw/
+data
 data/processed/
 *.wav
 *.mp3

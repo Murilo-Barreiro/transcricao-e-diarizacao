@@ -38,6 +38,7 @@ class ProcessingResult:
     diarization_enabled: bool
     num_speakers: int
     device: str
+    diarized_path: str
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
     segments: List[TranscriptionSegment] = field(default_factory=list)
     
@@ -51,6 +52,27 @@ class ProcessingResult:
             "diarization_enabled": self.diarization_enabled,
             "num_speakers": self.num_speakers,
             "device": self.device,
+            "diarized_path": self.diarized_path,
             "timestamp": self.timestamp,
-            "num_segments": len(self.segments)
+            "num_segments": len(self.segments),
+        }
+
+@dataclass
+class SummarizationResult:
+    """Resultado da sumarização"""
+    summary_path: str
+    model: str
+    summary_time_sec: float
+    input_tokens: int
+    output_tokens: int
+    timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
+
+    def to_dict(self) -> dict:
+        return {
+            "summary_path": self.summary_path,
+            "model": self.model,
+            "summary_time_sec": self.summary_time_sec,
+            "input_tokens": self.input_tokens,
+            "output_tokens": self.output_tokens,
+            "timestamp": self.timestamp
         }
