@@ -32,8 +32,6 @@ class AudioProcessor:
         self.diarizer = None
         
         if self.use_diarization:
-            if self.num_speakers is None:
-                self.num_speakers = 2
             self.diarizer = AudioDiarizer(hf_token=self.hf_token, num_speakers=self.num_speakers)
         
         logger.info(
@@ -41,7 +39,7 @@ class AudioProcessor:
             f"diarization={self.use_diarization}"
         )
     
-    def process(self, file_path:str, output_name:str = None) -> Tuple[ProcessingResult, str]:
+    def process(self, file_path:str, output_name:str = None, language: str | None = None) -> Tuple[ProcessingResult, str]:
         """Processa arquivo de áudio completo"""
         start_time = perf_counter()
         
@@ -55,7 +53,7 @@ class AudioProcessor:
         
         # 1. Transcrição
         logger.info("Etapa 1/3: Transcrição")
-        segments, info = self.transcriber.transcribe(audio_path)
+        segments, info = self.transcriber.transcribe(audio_path, language=language)
         
         # 2. Diarização (opcional)
         speaker_segments = []

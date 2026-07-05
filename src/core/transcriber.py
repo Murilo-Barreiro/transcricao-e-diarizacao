@@ -49,7 +49,7 @@ class WhisperTranscriber:
             logger.error(f"Erro ao carregar modelo: {e}")
             raise
     
-    def transcribe(self,audio_path: str,language: str = "pt") -> Tuple[List[TranscriptionSegment], dict]:
+    def transcribe(self, audio_path: str, language: str | None = None) -> Tuple[List[TranscriptionSegment], dict]:
         """
         Transcreve arquivo de áudio
         
@@ -65,8 +65,7 @@ class WhisperTranscriber:
         
         if self.model is None:
             self.load_model()
-        
-        language = language
+
         logger.info(f"Iniciando transcrição: {audio_path} (language={language})")
         
         try:
