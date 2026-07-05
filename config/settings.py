@@ -23,18 +23,21 @@ class Config:
     OUTPUT_DIR.mkdir(exist_ok=True)
     (OUTPUT_DIR / "transcriptions").mkdir(exist_ok=True)
     (OUTPUT_DIR / "diarizations").mkdir(exist_ok=True)
+    (OUTPUT_DIR / "summaries").mkdir(exist_ok=True)
+    STATS_DIR.mkdir(exist_ok=True)
     LOGS_DIR.mkdir(exist_ok=True)
     DATA_DIR.mkdir(exist_ok=True)
     
     DEFAULT_TRANSCRIPTION_MODEL = 'turbo'
     DEFAULT_SUMMARIZATION_MODEL = 'gpt-5-mini'
+    DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash'
 
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
     COMPUTE_TYPE = "float16" if torch.cuda.is_available() else "int8"
     SAMPLE_RATE = 16000
-    DEFAULT_LANGUAGE = "pt"
+    DEFAULT_LANGUAGE = None
     DIARIZATION_MODEL = "pyannote/speaker-diarization-3.1"
-    NUM_SPEAKERS = 2
+    NUM_SPEAKERS = None
 
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
     LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
