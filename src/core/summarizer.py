@@ -25,18 +25,23 @@ def prepare_prompt(prompt: str | Path, diarized_text: str | Path, extra_files: d
     return prompt_text
 
 
+def summary_output_path(audio_name: str, model_name: str) -> Path:
+    """Caminho neutro de saída da sumarização."""
+    return Config.OUTPUT_DIR / "summaries" / f"summary_{audio_name}_{model_name}.txt"
+
+
 def save_results(generated_text: str, result: SummarizationResult, audio_name: str, model_name: str) -> None:
     """Salva os resultados em arquivos."""
-    output_text = Config.OUTPUT_DIR / f"atas/ata_{audio_name}_{model_name}.txt"
+    output_text = summary_output_path(audio_name, model_name)
     save_summarization_output(generated_text, output_text)
-    
+
     output_json = Config.STATS_DIR  / f"summary_stats_{audio_name}_{model_name}.json"
     save_json_result(result, output_json)
-    
+
     log_path = Config.LOGS_DIR / "processing_log.jsonl"
     append_to_results_log(result, log_path)
-    
-    print(f"Resumo gerado e salvo em {Config.OUTPUT_DIR}/atas")
+
+    print(f"Resumo gerado e salvo em {Config.OUTPUT_DIR}/summaries")
 
 
 class OpenAIModel:
@@ -65,7 +70,7 @@ class OpenAIModel:
         generated_text = response.choices[0].message.content
         
         result = SummarizationResult(
-            summary_path="outputs/atas/",
+            summary_path="outputs/summaries/",
             input_tokens=response.usage.prompt_tokens,
             output_tokens=response.usage.completion_tokens,
             model=self.model_name,
@@ -125,7 +130,7 @@ class GeminiModel:
         end_time = perf_counter()
         
         result = SummarizationResult(
-            summary_path="outputs/atas/",
+            summary_path="outputs/summaries/",
             input_tokens=response.usage_metadata.prompt_token_count,
             output_tokens=response.usage_metadata.candidates_token_count,
             model=self.model_name,
@@ -133,7 +138,7 @@ class GeminiModel:
             timestamp=datetime.now().isoformat()
         )
         
-        save_results(response.text, result, "gemini", self.model_name)
+        save_results(response.text, result, diarized_text.name, self.model_name)
         
         logger.info("========== Geração concluída ==========")
         return result.to_dict()
