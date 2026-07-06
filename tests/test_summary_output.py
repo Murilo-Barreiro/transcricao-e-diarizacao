@@ -5,7 +5,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from config.settings import Config
-from src.core.summarizer import summary_output_path
+from src.core.summarizer import summary_output_path, clean_output_name
 
 
 class TestSummaryOutputPath(unittest.TestCase):
@@ -19,6 +19,32 @@ class TestSummaryOutputPath(unittest.TestCase):
 
     def test_no_atas_reference(self):
         self.assertNotIn("atas", str(summary_output_path("x", "y")))
+
+
+class TestCleanOutputName(unittest.TestCase):
+    def test_explicit_output_name_wins(self):
+        self.assertEqual(
+            clean_output_name("reuniao_explicita", "qualquer_coisa_diarized.txt"),
+            "reuniao_explicita",
+        )
+
+    def test_none_falls_back_and_strips_diarized_suffix(self):
+        self.assertEqual(
+            clean_output_name(None, "reuniao_diarized.txt"),
+            "reuniao",
+        )
+
+    def test_none_falls_back_with_path_object(self):
+        self.assertEqual(
+            clean_output_name(None, Path("reuniao_diarized.txt")),
+            "reuniao",
+        )
+
+    def test_none_without_diarized_suffix_keeps_stem(self):
+        self.assertEqual(
+            clean_output_name(None, "reuniao.txt"),
+            "reuniao",
+        )
 
 
 class TestConfigDefaults(unittest.TestCase):

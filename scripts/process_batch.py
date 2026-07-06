@@ -7,6 +7,7 @@ from tqdm import tqdm
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.core.processor import AudioProcessor
+from src.utils.cli_args import parse_num_speakers, parse_language
 from src.utils.logging_config import setup_logging
 
 logger = setup_logging(__name__)
@@ -45,7 +46,15 @@ def main():
         action="store_true",
         help="Continuar processamento mesmo se houver erros"
     )
-    
+    parser.add_argument(
+        "--num-speakers", dest="num_speakers", type=parse_num_speakers, default="auto",
+        help="Número de falantes ou 'auto' para detectar (default: auto)"
+    )
+    parser.add_argument(
+        "--language", type=parse_language, default="auto",
+        help="Idioma (ex.: pt) ou 'auto' para detectar (default: auto)"
+    )
+
     args = parser.parse_args()
     
     # Validar diretório
@@ -65,7 +74,8 @@ def main():
     # Processar arquivos
     processor = AudioProcessor(
         model_name=args.model,
-        use_diarization=not args.no_diarization
+        use_diarization=not args.no_diarization,
+        num_speakers=args.num_speakers
     )
     
     results = []
@@ -75,7 +85,7 @@ def main():
     try:
         for audio_file in tqdm(audio_files, desc="Processando arquivos"):
             try:
-                result = processor.process(str(audio_file))
+                result = processor.process(str(audio_file), language=args.language)
                 results.append(result)
                 logger.info(f"✅ Sucesso: {audio_file.name}")
             
