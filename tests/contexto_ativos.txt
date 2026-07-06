@@ -1,0 +1,28 @@
+Ativos do Mercado Financeiro Brasileiro
+1. Renda Fixa (Baixo Risco/Previsibilidade)
+
+• Tesouro Direto: Títulos da dívida pública. Inclui Tesouro Selic (pós-fixado), Tesouro IPCA+ (proteção contra inflação) e Prefixados.
+
+• CDB (Certificado de Depósito Bancário): Títulos emitidos por bancos. Geralmente rendem uma porcentagem do CDI.
+
+• LCI e LCA: Letras de Crédito Imobiliário e do Agronegócio. Possuem isenção de Imposto de Renda para pessoas físicas.
+
+• Debêntures: Títulos de dívida de empresas privadas (crédito privado).
+
+2. Renda Variável (Maior Risco/Potencial de Retorno)
+
+• Ações: Frações de empresas listadas na bolsa (B3). Principal índice: Ibovespa.
+
+• FIIs (Fundos Imobiliários): Investimento em imóveis físicos ou títulos do setor. Pagam dividendos mensais isentos de IR.
+
+• ETFs (Exchange Traded Funds): Fundos que replicam índices (ex: BOVA11 para o Ibovespa).
+
+• BDRs (Brazilian Depositary Receipts): Certificados que representam ações de empresas estrangeiras negociadas na B3.
+
+3. Indicadores Econômicos (Contexto)
+
+• Taxa Selic: Taxa básica de juros definida pelo Banco Central. Rege o retorno da renda fixa.
+
+• CDI: Taxa que acompanha de perto a Selic, usada como benchmark para investimentos privados.
+
+• IPCA: Índice de Preços ao Consumidor Amplo. Mede a inflação oficial do país.

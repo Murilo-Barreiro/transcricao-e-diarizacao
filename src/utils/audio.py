@@ -26,12 +26,7 @@ def load_audio(audio_path: str) -> Tuple[torch.Tensor, int]:
     return waveform, sample_rate
 
 
-def resample_audio(
-    waveform: torch.Tensor,
-    orig_sample_rate: int,
-    target_sample_rate: int,
-    device: str = "cpu"
-) -> torch.Tensor:
+def resample_audio(waveform: torch.Tensor,orig_sample_rate: int, target_sample_rate: int,device: str = "cpu") -> torch.Tensor:
     """
     Reamostra áudio para taxa de amostragem alvo
     
