@@ -30,6 +30,12 @@ def summary_output_path(audio_name: str, model_name: str) -> Path:
     return Config.OUTPUT_DIR / "summaries" / f"summary_{audio_name}_{model_name}.txt"
 
 
+def clean_output_name(output_name: str | None, diarized_text: str | Path) -> str:
+    """Resolve o nome limpo de saída: usa output_name se fornecido, senão deriva
+    do caminho do texto diarizado removendo o sufixo '_diarized' e a extensão."""
+    return output_name or Path(diarized_text).stem.removesuffix("_diarized")
+
+
 def save_results(generated_text: str, result: SummarizationResult, audio_name: str, model_name: str) -> None:
     """Salva os resultados em arquivos."""
     output_text = summary_output_path(audio_name, model_name)
@@ -50,7 +56,7 @@ class OpenAIModel:
         self.client = OpenAI(api_key=api_key)
         self.model_name = model_name
     
-    def generate(self, prompt: str | Path, diarized_text: str | Path, extra_files: dict[str, str] = None) -> dict:
+    def generate(self, prompt: str | Path, diarized_text: str | Path, extra_files: dict[str, str] = None, output_name: str | None = None) -> dict:
         """Gera conteúdo usando OpenAI."""
         logger.info(f"========== Iniciando geração com OpenAI: {self.model_name} ==========")
         start_time = perf_counter()
@@ -78,7 +84,8 @@ class OpenAIModel:
             timestamp=datetime.now().isoformat()
         )
         
-        save_results(generated_text, result, diarized_text.name, self.model_name)
+        name = clean_output_name(output_name, diarized_text)
+        save_results(generated_text, result, name, self.model_name)
         
         logger.info("========== Geração concluída ==========")
         return result.to_dict()
@@ -105,7 +112,7 @@ class GeminiModel:
             candidate_count=candidate_count
         )
     
-    def generate(self, prompt: str | Path, diarized_text: str | Path, extra_files: dict[str, str] = None) -> dict:
+    def generate(self, prompt: str | Path, diarized_text: str | Path, extra_files: dict[str, str] = None, output_name: str | None = None) -> dict:
         """Gera conteúdo usando Gemini."""
         logger.info(f"========== Iniciando geração com Gemini: {self.model_name} ==========")
         start_time = perf_counter()
@@ -138,7 +145,8 @@ class GeminiModel:
             timestamp=datetime.now().isoformat()
         )
         
-        save_results(response.text, result, diarized_text.name, self.model_name)
+        name = clean_output_name(output_name, diarized_text)
+        save_results(response.text, result, name, self.model_name)
         
         logger.info("========== Geração concluída ==========")
         return result.to_dict()

@@ -65,7 +65,7 @@ def main(argv=None):
 
         # Sumarização
         summarizer = build_summarizer(args.provider)
-        summarizer.generate(prompt_path, diarized_path, extra_files)
+        summarizer.generate(prompt_path, diarized_path, extra_files, output_name=output_name)
 
     except Exception as e:
         logger.error(f"Erro durante processamento: {e}", exc_info=True)
