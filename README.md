@@ -25,8 +25,8 @@ Sistema para transcrição automática de reuniões entre assessores de investim
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repo.git
-cd seu-repo
+git clone https://github.com/Murilo-Barreiro/transcricao-e-diarizacao.git
+cd transcricao-e-diarizacao
 ```
 
 ### 2. Criar ambiente virtual
@@ -41,14 +41,15 @@ venv\Scripts\activate  # Windows
 ### 3. Instalar dependências
 
 ```bash
-pip install faster-whisper
-pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu118  # Para GPU
-# ou
-pip install torch torchaudio  # Para CPU apenas
+pip install -r requirements.txt
+```
 
-pip install pyannote.audio
-pip install openai google-genai
-pip install python-dotenv
+Para processar em GPU, instale o torch do índice do PyTorch antes das demais
+dependências, para não baixar a build de CPU por cima:
+
+```bash
+pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu121
+pip install -r requirements.txt
 ```
 
 ### 4. Instalar FFmpeg
@@ -93,24 +94,27 @@ GEMINI_API_KEY=sua_chave_gemini
 │   │   ├── transcriber.py   # Transcrição com Whisper
 │   │   ├── diarizer.py      # Diarização com Pyannote
 │   │   ├── summarizer.py    # Geração de resumos
+│   │   ├── summarize.py     # Motor genérico de sumarização
 │   │   └── speaker_assignment.py
 │   ├── models/
 │   │   └── schemas.py       # Modelos de dados
 │   └── utils/
 │       ├── audio.py         # Utilitários de áudio
+│       ├── cli_args.py      # Argumentos de linha de comando
 │       ├── files.py         # Manipulação de arquivos
 │       └── logging_config.py
 ├── scripts/
 │   ├── process_single.py    # Processar um arquivo
 │   ├── process_batch.py     # Processar múltiplos arquivos
 │   └── benchmark.py         # Benchmark de modelos
+├── tests/                   # Testes de CLI, plumbing e saída
 ├── data/
 │   ├── input/               # Arquivos de entrada
 │   └── prompts/             # Prompts para IA
 └── outputs/
     ├── transcriptions/      # Transcrições puras
     ├── diarizations/        # Transcrições com falantes
-    ├── atas/                # Resumos/atas gerados
+    ├── summaries/           # Resumos/atas gerados
     ├── logs/                # Logs de processamento
     └── stats/               # Estatísticas JSON
 ```
