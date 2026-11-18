@@ -11,7 +11,6 @@ import torch
 import torchaudio
 from faster_whisper import WhisperModel
 from pyannote.audio import Pipeline
-from dotenv import load_dotenv
 
 # Configuração de logging
 logging.basicConfig(
@@ -24,8 +23,6 @@ logger = logging.getLogger(__name__)
 warnings.filterwarnings("ignore", category=UserWarning)
 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
 
-# Carregar variáveis de ambiente
-load_dotenv()
 
 class Config:
     """Configurações centralizadas"""
@@ -355,7 +352,7 @@ def main(audio_file:str):
         logger.info(f"✅ Tempo total: {int(total_time//60)}min {int(total_time%60)}seg")
         
     except Exception as e:
-        logger.error(f"❌ Erro durante processamento: {e}", exc_info=True)
+        logger.error(f"Erro durante processamento: {e}", exc_info=True)
         raise
 
 

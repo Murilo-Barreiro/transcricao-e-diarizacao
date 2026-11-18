@@ -234,3 +234,26 @@ Este projeto é de uso interno.
 ## Suporte
 
 Para dúvidas ou problemas, abra uma issue no repositório.
+
+## Uso (CLI)
+
+Perfil genérico (detecção automática de idioma e falantes):
+
+```bash
+python scripts/process_single.py \
+  --audio caminho/do/arquivo.mp4 \
+  --prompt prompts/generic_summary.txt
+```
+
+Perfil ata (reunião, valores fixos e contexto extra — arquivos locais, não versionados):
+
+```bash
+python scripts/process_single.py \
+  --audio data/input/sample1 \
+  --prompt data/prompts/main.txt \
+  --extra context_ativos=data/prompts/context_ativos.txt \
+  --num-speakers 2 --language pt --provider openai
+```
+
+Flags: `--output` (nome-base da saída), `--provider {openai,gemini}`,
+`--num-speakers {auto|N}`, `--language {auto|código}`. Saída em `outputs/summaries/`.
